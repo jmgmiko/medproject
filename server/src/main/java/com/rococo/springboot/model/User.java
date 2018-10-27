@@ -1,5 +1,6 @@
 package com.rococo.springboot.model;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,10 +15,10 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Entity // This tells Hibernate to make a table out of this class
-@Table(name = "user") // This tells Hibernate to name the table as User and not User
+@Table(name = "user") // This tells Hibernate to name the table as user and not User
 @DynamicInsert(true)
 @DynamicUpdate(true)
-public class User {
+public class User implements Serializable {
 
 	public User() {
 	};
@@ -124,4 +125,6 @@ public class User {
 		this.lastName = lastName;
 	}
 
+        
+        
 }

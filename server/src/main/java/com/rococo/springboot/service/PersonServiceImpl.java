@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.rococo.springboot.model.PersonModel;
+import com.rococo.springboot.model.DiseaseModel;
 import com.rococo.springboot.repository.PersonRepository;
 
 @Service
@@ -17,13 +17,13 @@ public class PersonServiceImpl implements PersonService {
 	private PersonRepository personRepository;
 
 	@Override
-	public PersonModel getPersonInfo(PersonModel personModel) {
+	public DiseaseModel getPersonInfo(DiseaseModel personModel) {
 		return personRepository.findById(personModel.getId()).get();
 	}
 
 	@Override
-	public List<PersonModel> getAll() {
-		List<PersonModel> list = new ArrayList<>();
+	public List<DiseaseModel> getAll() {
+		List<DiseaseModel> list = new ArrayList<>();
 		personRepository.findAll().iterator().forEachRemaining(list::add);
 		return list;
 	}
@@ -32,7 +32,7 @@ public class PersonServiceImpl implements PersonService {
 	 * @see com.rococo.springboot.service.PersonService#registerPerson(com.rococo.springboot.model.PersonModel)
 	 */
 	@Override
-	public void registerPerson(PersonModel personModel) {
+	public void registerPerson(DiseaseModel personModel) {
 		personRepository.save(personModel);
 	}
 

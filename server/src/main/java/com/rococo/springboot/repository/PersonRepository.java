@@ -2,8 +2,8 @@ package com.rococo.springboot.repository;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.rococo.springboot.model.PersonModel;
+import com.rococo.springboot.model.DiseaseModel;
 
-public interface PersonRepository extends CrudRepository<PersonModel, Integer>{
+public interface PersonRepository extends CrudRepository<DiseaseModel, Integer>{
 
 }

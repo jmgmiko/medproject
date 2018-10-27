@@ -1,17 +1,25 @@
 package com.rococo.springboot.model;
 
+import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity // This tells Hibernate to make a table out of this class
-@Table(name = "user") // This tells Hibernate to name the table as User and not UserModel
-public class UserModel {
+@Table(name = "medical_record") // This tells Hibernate to name the table as User and not UserModel
+public class MedicalRecordModel implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,31 +35,21 @@ public class UserModel {
 
 	@NotNull
 	@NotEmpty
-	@Size(min = 2, message = "Username should at least have 2 characters")
-	@Size(max = 15, message = "Username should not exceed 15 characters")
-	private String username;
-
-	public String getUsername() {
-		return this.username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "patient_id")
+	private PatientModel patient;
 
 	@NotNull
 	@NotEmpty
-	@Size(min = 2, message = "Password should at least have 2 characters")
-	@Size(max = 15, message = "Password should not exceed 15 characters")
-	private String pass;
+	private Double total;
 
-	public String getPassword() {
-		return this.pass;
-	}
+        public Double getTotal() {
+            return total;
+        }
 
-	public void setPassword(String password) {
-		this.pass = password;
-	}
+        public void setTotal(Double total) {
+            this.total = total;
+        }
 
 	@NotNull
 	@NotEmpty
@@ -90,5 +88,22 @@ public class UserModel {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+        
+        @Column(name = "created_on", updatable=false)
+        private Date creationDate = new Date();
+        
+        @Column(name = "modified_on")
+        private Date modificationDate = new Date();
+        
+        @PreUpdate
+        public void setLastUpdate() {  this.modificationDate = new Date(); }
 
+        public Date getCreationDate() {
+            return creationDate;
+        }
+
+        public Date getModificationDate() {
+            return modificationDate;
+        }     
+     
 }
