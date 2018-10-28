@@ -2,6 +2,10 @@ package com.rococo.springboot.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,9 +39,17 @@ public class MedicalRecordModel implements Serializable {
 
 	@NotNull
 	@NotEmpty
-        @ManyToOne(fetch = FetchType.LAZY)
+        @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "patient_id")
 	private PatientModel patient;
+
+        public PatientModel getPatient() {
+            return patient;
+        }
+
+        public void setPatient(PatientModel patient) {
+            this.patient = patient;
+        }
 
 	@NotNull
 	@NotEmpty
@@ -50,60 +62,80 @@ public class MedicalRecordModel implements Serializable {
         public void setTotal(Double total) {
             this.total = total;
         }
-
-	@NotNull
-	@NotEmpty
-	@Size(min = 2, message = "First Name should at least have 2 characters")
-	@Size(max = 15, message = "FirstName should not exceed 15 characters")
-	private String first_name;
-
-	public String getFirst_name() {
-		return this.first_name;
-	}
-
-	public void setFirst_name(String first_name) {
-		this.first_name = first_name;
-	}
-
-	@NotNull
-	@NotEmpty
-	@Size(min = 2, message = "Last Name should at least have 2 characters")
-	@Size(max = 15, message = "Last Name should not exceed 15 characters")
-	private String last_name;
-
-	public String getLast_name() {
-		return this.last_name;
-	}
-
-	public void setLast_name(String last_name) {
-		this.last_name = last_name;
-	}
-
-	private String email;
-
-	public String getEmail() {
-		return this.email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
         
-        @Column(name = "created_on", updatable=false)
-        private Date creationDate = new Date();
+        @Column(name = "admission", updatable=false)
+        private Date admissionDate = new Date();
         
-        @Column(name = "modified_on")
-        private Date modificationDate = new Date();
+        @Column(name = "discharge")
+        private Date dischargeDate = new Date();
         
         @PreUpdate
-        public void setLastUpdate() {  this.modificationDate = new Date(); }
+        public void setDischarge() {  this.dischargeDate = new Date(); }
 
-        public Date getCreationDate() {
-            return creationDate;
+        public Date getAdmissionDate() {
+            return admissionDate;
         }
 
-        public Date getModificationDate() {
-            return modificationDate;
+        public Date getDischargeDate() {
+            return dischargeDate;
         }     
+        
+        @NotNull
+	@NotEmpty
+        @Size(min=1, message="List should at least have 1 symptom")
+        @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy="medical_record")
+	private List<String> symptoms;
+        
+        public List<String> getSymptoms() {
+            return symptoms;
+        }
+
+        public void setSymptoms(List<String> symptoms) {
+            this.symptoms = symptoms;
+        }
      
+        @OneToMany(
+            mappedBy = "medical_record",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+        )
+        private List<RecordMedicine> medicine;
+        
+        public void addMedicine(MedicineModel med) {
+            RecordMedicine give = new RecordMedicine(this, med);
+            medicine.add(give);
+            med.getRecords().add(give);
+        }
+
+        public void removeTag(MedicineModel med) {
+            for (Iterator<RecordMedicine> iterator = medicine.iterator(); 
+                 iterator.hasNext(); ) {
+                RecordMedicine some = iterator.next();
+
+                if (some.getMed().equals(med) &&
+                        some.getRecord().equals(this)) {
+                    iterator.remove();
+                    some.getMed().getRecords().remove(some);
+                    some.setMed(null);
+                    some.setRecord(null);
+                }
+            }
+        }
+
+        public List<RecordMedicine> getMedicine() {
+            return medicine;
+        }     
+        
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            MedicalRecordModel record = (MedicalRecordModel) o;
+            return Objects.equals(id, record.id) && Objects.equals(symptoms, record.getSymptoms()) && Objects.equals(total, record.total) && Objects.equals(patient, record.patient) && Objects.equals(dischargeDate, record.dischargeDate) && Objects.equals(admissionDate, record.admissionDate);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, total, patient, admissionDate, dischargeDate, medicine, symptoms);
+        }
 }

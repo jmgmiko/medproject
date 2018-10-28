@@ -1,12 +1,15 @@
 package com.rococo.springboot.model;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -21,6 +24,13 @@ public class MedicineModel implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
+        
+        @OneToMany(
+            mappedBy = "medicine",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+        )
+        private List<RecordMedicine> records;
 
 	@NotNull
 	@NotEmpty
@@ -35,6 +45,10 @@ public class MedicineModel implements Serializable {
 
 	private String manuf;
 
+        public Integer getId() {
+            return id;
+        }
+        
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -62,6 +76,14 @@ public class MedicineModel implements Serializable {
         public void setPrice(double price) {
             this.price = price;
         }
+
+        public List<RecordMedicine> getRecords() {
+            return records;
+        }
+
+        public void setRecords(List<RecordMedicine> records) {
+            this.records = records;
+        } 
         
         @Override
         public boolean equals (Object object) {

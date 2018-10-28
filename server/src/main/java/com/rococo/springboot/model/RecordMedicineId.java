@@ -15,19 +15,19 @@ import javax.persistence.Embeddable;
  * @author UESR
  */
 @Embeddable
-public class DiseaseMedicineId implements Serializable {
+public class RecordMedicineId implements Serializable {
 
-    @Column(name = "disease_id")
-    private Integer disease;
+    @Column(name = "record_id")
+    private Integer record;
     
     @Column(name = "medicine_id")
     private Integer medicine;
     
-    public DiseaseMedicineId() {
+    public RecordMedicineId() {
     }
     
-    public DiseaseMedicineId(Integer diseaseId, Integer medId) {
-        this.disease = diseaseId;
+    public RecordMedicineId(Integer recordId, Integer medId) {
+        this.record = recordId;
         this.medicine = medId;
     }
     
@@ -38,13 +38,13 @@ public class DiseaseMedicineId implements Serializable {
         if (o == null || getClass() != o.getClass()) 
             return false;
  
-        DiseaseMedicineId that = (DiseaseMedicineId) o;
-        return Objects.equals(disease, that.disease) && 
+        RecordMedicineId that = (RecordMedicineId) o;
+        return Objects.equals(record, that.record) && 
                Objects.equals(medicine, that.medicine);
     }
  
     @Override
     public int hashCode() {
-        return Objects.hash(disease, medicine);
+        return Objects.hash(record, medicine);
     }
 }
